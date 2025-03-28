@@ -5,32 +5,27 @@ import socket
 import sys
 import time
 
-if len(sys.argv) != 2:
-    print(f"Usage: python {sys.argv[0]} <server-ip>")
-    sys.exit(1)
-
-FPS = 120
-
-SERVER_IP = sys.argv[1]
 PORT = 65432
+FPS = 120 
+
 
 ARENA_WIDTH, ARENA_HEIGHT = 1000, 1000
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
-ANGLE_STEP = 2
+ANGLE_STEP = 3 
 
 C_PLAYER = [ (0, 255, 255),  # cyan
              (255, 100, 0)   # orange
            ]
 C_ARENA = (50, 50, 50)
 C_DEAD = (55, 10, 10)
-C_GRID =  (200, 200, 200)
+C_GRID = (200, 200, 200)
 
 
 class InternetStuff:
 
     def __init__(self, ip, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((SERVER_IP, PORT))
+        self.sock.connect((ip, port))
         self.sock.setblocking(False)
         self.buffer = ""
 
@@ -141,7 +136,6 @@ class ArenaViewer:
 
     def __init__(self, width, height):
         pygame.init()
-        pygame.font.init()
         self.width = width
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
@@ -222,7 +216,12 @@ class ArenaViewer:
         self.clock.tick(FPS)
 
 
-def main():
+def main(argv):
+    if len(argv) != 2:
+        print(f"Usage: python {sys.argv[0]} <server-ip>")
+        sys.exit(1)
+    SERVER_IP = argv[1]
+
     arenaViewer = ArenaViewer(SCREEN_WIDTH, SCREEN_HEIGHT)
     internetStuff = InternetStuff(SERVER_IP, PORT)
 
@@ -281,4 +280,4 @@ def main():
         arenaViewer.next_frame()
     return True
 
-main()
+main(sys.argv)

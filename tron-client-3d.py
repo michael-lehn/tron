@@ -1,3 +1,4 @@
+import serial
 import sys
 import math
 import random
@@ -10,6 +11,7 @@ from OpenGL.GLU import *
 
 PORT = 65432
 FPS = 80
+SERDEV = '/dev/cu.usbserial-01C5FB3D'
 
 ARENA_WIDTH, ARENA_HEIGHT = 1000, 1000
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
@@ -216,6 +218,9 @@ class ArenaViewer:
         self.height = height
         pygame.display.set_mode((width, height), DOUBLEBUF | OPENGL)
         self.i_am = None
+        self.left_view = False
+        self.right_view = False
+        self.show_minimap = False
         self.new_round()
 
         pygame.display.set_caption("TRON Client with OpenGL")
@@ -493,9 +498,12 @@ class ArenaViewer:
         # forward view
         self.set_camera()
         self.draw_frame()
-        self.draw_side_view(0)
-        self.draw_side_view(1)
-        self.draw_minimap()
+        if self.left_view:
+            self.draw_side_view(0)
+        if self.right_view:
+            self.draw_side_view(1)
+        if self.show_minimap:
+            self.draw_minimap()
 
         pygame.display.flip()
         self.clock.tick(FPS)
@@ -562,8 +570,39 @@ def main(argv):
     tronClient = TronClient(SERVER_IP, PORT)
     arenaViewer = ArenaViewer(SCREEN_WIDTH, SCREEN_HEIGHT)
 
+    try:
+        ser = serial.Serial(SERDEV, 9600, timeout=0)
+    except:
+        ser = None
+        print(f"can not open serial device {SERDEV}")
+
     playing = True
+    oldXSerVal = None
     while playing:
+        if ser is not None and ser.in_waiting > 0:
+            sermap = {
+                b"A": "R",
+                b"B": "L",
+            }
+            ch = ser.read(1)
+            print(f"ser.read: ch = {ch}")
+            if ch in sermap:
+                cmd = sermap[ch]
+                if not tronClient.send(cmd):
+                    return
+            elif ch == b"X":
+                while ser.in_waiting < 4:
+                    pass
+                val = int(ser.read(4).decode('utf-8'))
+                if oldXSerVal is None:
+                    oldXSerVal = val
+                elif val > oldXSerVal:
+                    if not tronClient.send("U"):
+                        return
+                elif val < oldXSerVal:
+                    if not tronClient.send("D"):
+                        return
+                ser.write(b'X')
         for event in pygame.event.get():
             if event.type == QUIT:
                 playing = False
@@ -574,6 +613,12 @@ def main(argv):
                     playing = False
                 elif event.key == pygame.K_i:
                     arenaViewer.set_i_am_player(1 - arenaViewer.i_am)
+                elif event.key == pygame.K_a:
+                    arenaViewer.left_view = 1 - arenaViewer.left_view
+                elif event.key == pygame.K_d:
+                    arenaViewer.right_view = 1 - arenaViewer.right_view
+                elif event.key == pygame.K_s:
+                    arenaViewer.show_minimap = 1 - arenaViewer.show_minimap
                 else:
                     keymap = {
                         pygame.K_LEFT: "R",

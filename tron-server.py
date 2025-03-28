@@ -3,13 +3,14 @@ import select
 import socket
 import time
 
-FPS = 80
+FPS = 60
 
 HOST = '0.0.0.0'
 PORT = 65432
-WIDTH = 1000
-HEIGHT = 1000
+WIDTH, HEIGHT = 1000, 1000
+
 SPEED = (0.1, 0.3, 0.7, 0.9, 1.0, 1.1, 1.3, 1.7, 2.5, 4.1)
+SPEED_INITIAL = 4
 
 class ServerStuff:
     def __init__(self, host, port):
@@ -165,7 +166,7 @@ class PlayerModel:
         self.y = y
         self.dx = dx
         self.dy = dy
-        self.speed = 4
+        self.speed = SPEED_INITIAL
         self.alive = True
         self.arena = None
         self.player_id = None
