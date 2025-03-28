@@ -7,7 +7,7 @@ FPS = 60
 
 HOST = '0.0.0.0'
 PORT = 65432
-WIDTH, HEIGHT = 1000, 1000
+WIDTH, HEIGHT = 3000, 3000
 
 SPEED = (0.1, 0.3, 0.7, 0.9, 1.0, 1.1, 1.3, 1.7, 2.5, 4.1)
 SPEED_INITIAL = 4
@@ -204,7 +204,7 @@ def main():
 
     while True:
         player = []
-        player.append(PlayerModel(WIDTH // 2 - 200, HEIGHT // 2 + 10, 1, 0))
+        player.append(PlayerModel(WIDTH // 2 - 200, HEIGHT // 2, 1, 0))
         player.append(PlayerModel(WIDTH // 2 + 200, HEIGHT // 2, -1, 0))
         arena = Arena(WIDTH, HEIGHT, player)
 
