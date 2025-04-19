@@ -280,7 +280,7 @@ class Tron3D:
         self.tron_client = TronClient(self)
 
         pygame.init()
-        pygame.display.set_caption("TRON: Lightcycle 2D")
+        pygame.display.set_caption("TRON: Lightcycle 3D")
 
         fonts = pygame.font.get_fonts()
         for name in sorted(fonts):
@@ -432,7 +432,7 @@ class Tron3D:
         self.screen.blit(prompt_server, (self.width // 5, 230))
         self.screen.blit(input_server,   (self.width // 5 + 150, 230))
 
-        hint = ("Q: Quit  |  TAB: switch field  |  F: find server  "
+        hint = ("^Q: Quit  |  TAB: switch field  |  ^F: find server  "
                 "|  RETURN: connect")
         hint_text = self.hint_font.render(hint, True, (150, 150, 150))
         hint_rect = hint_text.get_rect(center=(self.width // 2,
@@ -451,7 +451,8 @@ class Tron3D:
         self.screen.blit(title_text, title_rect)
 
         server_list = self.get_serverlist()
-        self.serverlist_i %= len(server_list)
+        if len(server_list) != 0:
+            self.serverlist_i %= len(server_list)
 
         max_items = 3
 
@@ -872,12 +873,13 @@ class Tron3D:
                 self.ser = None
 
             for event in pygame.event.get():
+                mods = pygame.key.get_mods()
                 if event.type == pygame.QUIT:
                     return
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
+                    if event.key == pygame.K_q and (mods & pygame.KMOD_CTRL):
                         return
-                    elif event.key == pygame.K_p:
+                    elif event.key == pygame.K_p and (mods & pygame.KMOD_CTRL):
                         self.ser = open_serial()
                     elif self.tron_client.not_connected():
                         if in_select_server:
@@ -898,7 +900,8 @@ class Tron3D:
                                                          self.name)
                             elif event.key == pygame.K_TAB:
                                 self.edit = (self.edit + 1) % 2
-                            elif event.key == pygame.K_f:
+                            elif event.key == pygame.K_f \
+                                    and (mods & pygame.KMOD_CTRL):
                                 in_select_server = True
                             elif event.key == pygame.K_BACKSPACE:
                                 if self.edit == 0:
