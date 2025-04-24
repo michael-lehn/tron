@@ -42,7 +42,7 @@ class Tron2D:
         self.ser = None
         if ser_dev is not None:
             try:
-                self.ser = None # serial.Serial(ser_dev, 9600, timeout=0)
+                self.ser = serial.Serial(ser_dev, 9600, timeout=0)
                 self.ser.write(b'X')
             except:
                 print(f"can not open serial device {ser_dev}")
