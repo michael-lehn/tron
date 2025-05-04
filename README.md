@@ -77,6 +77,15 @@ python tron-3d.py
 In both cases, you will be prompted to enter your **player name** and the **IP
 address** of the server.
 
+## Controls
+
+Use the arrow keys to control your lightcycle:
+
+- ⬅️ Left Arrow — Turn left  
+- ➡️ Right Arrow — Turn right  
+- ⬆️ Up Arrow — Accelerate  
+- ⬇️ Down Arrow — Decelerate
+
 ## License
 
 This project is provided for educational and non-commercial use.
