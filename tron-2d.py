@@ -5,6 +5,7 @@ import sys
 from tron_client import TronClient
 from tron_client import ServerScanner
 import serial.tools.list_ports
+import getpass
 
 C_PLAYER = [
     (111, 226, 226), # cyan (Player 1)
@@ -23,7 +24,7 @@ class Tron2D:
         self.fps = fps
         self.width, self.height = width, height
 
-        self.name = "Mick"
+        self.name = getpass.getuser()
         self.host = "localhost"
         self.port = 65432
         self.edit = 0

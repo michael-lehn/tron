@@ -3,6 +3,7 @@ import pygame
 import serial
 import serial.tools.list_ports
 import sys
+import getpass
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -266,7 +267,7 @@ class Tron3D:
         self.fps = fps
         self.width, self.height = width, height
 
-        self.name = "Mick"
+        self.name = getpass.getuser()
         self.host = "localhost"
         self.port = 65432
         self.edit = 0
